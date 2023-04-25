@@ -12,6 +12,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 /// 他ページのインポート
 import 'package:counter_firebase/normal_counter_page.dart';
 import 'package:counter_firebase/crash_page.dart';
+import 'package:counter_firebase/remote_config_page.dart';
 
 /// メイン
 void main() async {
@@ -84,6 +85,10 @@ class MyHomePage extends ConsumerWidget {
           _PagePushButton(
             buttonTitle: 'クラッシュページ',
             pagename: CrashPage(),
+          ),
+          const _PagePushButton(
+            buttonTitle: 'Remote Configカウンター',
+            pagename: RemoteConfigPage(),
           ),
         ],
       ),

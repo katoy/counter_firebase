@@ -8,11 +8,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// 他ページのインポート
 import 'package:counter_firebase/normal_counter_page.dart';
 import 'package:counter_firebase/crash_page.dart';
 import 'package:counter_firebase/remote_config_page.dart';
+import 'package:counter_firebase/auth_page.dart';
 
 /// メイン
 void main() async {
@@ -71,25 +73,55 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    /// ユーザー情報の取得
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        ref.watch(userEmailProvider.notifier).state = 'ログインしていません';
+      } else {
+        ref.watch(userEmailProvider.notifier).state = user.email!;
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Homepage'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(10),
-        children: const <Widget>[
-          _PagePushButton(
+        children: <Widget>[
+          /// ユーザ情報の表示
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.person),
+              Text(ref.watch(userEmailProvider)),
+            ],
+          ),
+
+          /// ページ遷移
+          const _PagePushButton(
             buttonTitle: 'ノーマルカウンター',
             pagename: NormalCounterPage(),
+            bgColor: Colors.blue,
           ),
-          _PagePushButton(
+          const _PagePushButton(
             buttonTitle: 'クラッシュページ',
             pagename: CrashPage(),
+            bgColor: Colors.blue,
           ),
           const _PagePushButton(
             buttonTitle: 'Remote Configカウンター',
             pagename: RemoteConfigPage(),
+            bgColor: Colors.blue,
           ),
+          const _PagePushButton(
+            buttonTitle: '認証ページ',
+            pagename: AuthPage(),
+            bgColor: Colors.red,
+          ),
+
+          /// 各ページへの遷移(認証後利用可能)
+          /// 認証されていなかったらボタンを押せない状態にする
         ],
       ),
     );
@@ -102,6 +134,7 @@ class _PagePushButton extends StatelessWidget {
     Key? key,
     required this.buttonTitle,
     required this.pagename,
+    required MaterialColor bgColor,
   }) : super(key: key);
 
   final String buttonTitle;

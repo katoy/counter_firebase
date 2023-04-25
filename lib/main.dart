@@ -15,6 +15,7 @@ import 'package:counter_firebase/normal_counter_page.dart';
 import 'package:counter_firebase/crash_page.dart';
 import 'package:counter_firebase/remote_config_page.dart';
 import 'package:counter_firebase/auth_page.dart';
+import 'package:counter_firebase/firestore_page.dart';
 
 /// メイン
 void main() async {
@@ -122,6 +123,13 @@ class MyHomePage extends ConsumerWidget {
 
           /// 各ページへの遷移(認証後利用可能)
           /// 認証されていなかったらボタンを押せない状態にする
+          FirebaseAuth.instance.currentUser?.uid != null
+              ? const _PagePushButton(
+                  buttonTitle: 'Firestoreカウンター',
+                  pagename: FirestorePage(),
+                  bgColor: Colors.green,
+                )
+              : const Text('Firestoreカウンターを開くためには認証してください。'),
         ],
       ),
     );
